@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Moussa Kouyaté — Portfolio Virtuel 3D | Tour de l'Afrique</title>
+  
+  <!-- FontAwesome 6 Icons Pro & Web Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+</head>
+<body>
+
+  <!-- Scène 3D WebGL Canvas -->
+  <div id="webgl-container"></div>
+
+  <!-- En-tête / Header de l'application -->
+  <header class="app-header">
+    <div class="brand-box" onclick="window.selectLevelNav(0)" title="Voir le profil de Moussa Kouyaté">
+      <div class="brand-logo">MK</div>
+      <div class="brand-info">
+        <h1>MOUSSA KOUYATÉ</h1>
+        <p>
+          <span class="job-title">Développeur Front-End & Full-Stack</span>
+          <span class="tag-city"><i class="fa-solid fa-location-dot"></i> Bamako</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <!-- Sélecteur d'ambiance d'éclairage -->
+      <div class="theme-toggle-group">
+        <button class="theme-btn active" data-theme="golden" title="Coucher de soleil sahélien (Golden Hour)">
+          <i class="fa-solid fa-cloud-sun"></i>
+          <span class="theme-label">Coucher d'or</span>
+        </button>
+        <button class="theme-btn" data-theme="day" title="Plein jour ensoleillé">
+          <i class="fa-solid fa-sun"></i>
+          <span class="theme-label">Jour</span>
+        </button>
+        <button class="theme-btn" data-theme="night" title="Nuit étoilée illuminée">
+          <i class="fa-solid fa-moon"></i>
+          <span class="theme-label">Nuit</span>
+        </button>
+      </div>
+
+      <!-- Visite Guidée Automatique -->
+      <button id="auto-tour-btn" class="glass-btn" title="Lancer le survol automatique du monument">
+        <i class="fa-solid fa-play"></i>
+        <span class="btn-text">Visite Guidée</span>
+      </button>
+
+      <!-- Vue Globale Reset -->
+      <button id="reset-view-btn" class="glass-btn" title="Vue d'ensemble du monument">
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <span class="btn-text">Vue Globale</span>
+      </button>
+
+      <!-- À propos du monument original -->
+      <button id="monument-info-btn" class="glass-btn" title="Histoire & Architecture de la Tour">
+        <i class="fa-solid fa-landmark-dome"></i>
+        <span class="btn-text">Le Monument</span>
+      </button>
+
+      <!-- Toggle Son Web Audio -->
+      <button id="sound-toggle-btn" class="glass-btn" title="Activer / Couper les effets sonores">
+        <i class="fa-solid fa-volume-high"></i>
+        <span class="btn-text">Son on</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Indication de navigation 3D (HUD) -->
+  <div class="hud-hint">
+    <span><i class="fa-solid fa-arrows-spin"></i> Glissez pour pivoter 360°</span>
+    <span>•</span>
+    <span><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom molette / pincement</span>
+    <span>•</span>
+    <span><i class="fa-solid fa-circle-dot" style="color: var(--primary);"></i> Cliquez sur les orbes dorées</span>
+  </div>
+
+  <!-- Barre de navigation inférieure par niveaux de la Tour (Responsive) -->
+  <div class="level-nav-container">
+    <nav class="level-nav-bar" aria-label="Niveaux de la Tour de l'Afrique">
+      <div class="level-step" data-index="0" title="Sommet et vision d'ensemble">
+        <div class="step-badge"><i class="fa-solid fa-earth-africa"></i></div>
+        <div class="step-info">
+          <span class="step-num">Niveau 5</span>
+          <span class="step-name">À propos & Vision</span>
+        </div>
+      </div>
+
+      <div class="level-step" data-index="1" title="Belvédère supérieur et technologies">
+        <div class="step-badge"><i class="fa-solid fa-laptop-code"></i></div>
+        <div class="step-info">
+          <span class="step-num">Niveau 4</span>
+          <span class="step-name">Compétences Tech</span>
+        </div>
+      </div>
+
+      <div class="level-step" data-index="2" title="Fût central et projets réalisés">
+        <div class="step-badge"><i class="fa-solid fa-rocket"></i></div>
+        <div class="step-info">
+          <span class="step-num">Niveau 3</span>
+          <span class="step-name">Projets & Apps</span>
+        </div>
+      </div>
+
+      <div class="level-step" data-index="3" title="Base monumentale et cursus académique">
+        <div class="step-badge"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="step-info">
+          <span class="step-num">Niveau 2</span>
+          <span class="step-name">Formations & Diplômes</span>
+        </div>
+      </div>
+
+      <div class="level-step" data-index="4" title="Esplanade d'entrée et contact">
+        <div class="step-badge"><i class="fa-solid fa-paper-plane"></i></div>
+        <div class="step-info">
+          <span class="step-num">Niveau 1</span>
+          <span class="step-name">Contact & Réseaux</span>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Panneau latéral / Tiroir de détails interactifs (Glassmorphism & Responsive Bottom-Sheet) -->
+  <aside id="detail-drawer" class="detail-drawer" aria-labelledby="drawer-title">
+    <div class="drawer-drag-handle"></div>
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <span id="drawer-tag" class="drawer-level-tag">
+          <i class="fa-solid fa-layer-group"></i> Niveau
+        </span>
+        <h2 id="drawer-title">Titre de la section</h2>
+      </div>
+      <button id="close-drawer" class="close-drawer-btn" title="Fermer le panneau">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div id="drawer-desc" class="drawer-desc">
+      Description architecturale et symbolique du niveau.
+    </div>
+
+    <div id="drawer-body">
+      <!-- Contenu injecté dynamiquement par app.js -->
+    </div>
+  </aside>
+
+  <!-- Modal : À propos de la Tour de l'Afrique de Bamako -->
+  <div id="monument-modal" class="monument-modal-overlay">
+    <div class="monument-modal-card">
+      <div class="modal-img-wrapper">
+        <img src="tour_afrique_original.jpg" alt="La Tour de l'Afrique à Bamako">
+        <div class="modal-img-overlay">
+          <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--primary-light); font-weight: 700; letter-spacing: 1px;">
+            <i class="fa-solid fa-landmark"></i> Monument Emblématique du Mali
+          </span>
+          <h3 style="font-size: 1.5rem; color: #fff; margin: 4px 0;">La Tour de l'Afrique</h3>
+          <p style="font-size: 0.84rem; color: #cbd5e1; margin: 0;">
+            <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> Rond-point de Faladié, Bamako, Mali
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="monument-facts-grid">
+          <div class="fact-box">
+            <div class="fact-value"><i class="fa-solid fa-ruler-vertical" style="color: var(--primary);"></i> 46 Mètres</div>
+            <div class="fact-label">Hauteur totale</div>
+          </div>
+          <div class="fact-box">
+            <div class="fact-value"><i class="fa-solid fa-archway" style="color: var(--primary);"></i> Soudano-Sahélien</div>
+            <div class="fact-label">Style architectural</div>
+          </div>
+          <div class="fact-box">
+            <div class="fact-value"><i class="fa-solid fa-calendar-check" style="color: var(--primary);"></i> 2001</div>
+            <div class="fact-label">Inauguration</div>
+          </div>
+        </div>
+
+        <p>
+          Érigée au cœur de Bamako à l'entrée sud de la capitale malienne, <strong>La Tour de l'Afrique</strong> est un hommage architectural grandiose aux pères fondateurs de l'unité africaine.
+        </p>
+        <p>
+          Sa silhouette s'inspire du banco et des minarets sahéliens ancestraux de Djenné et de Tombouctou. Elle culmine avec la carte stylisée du continent africain illuminée, symbolisant la fierté, la renaissance et l'ouverture de la jeunesse africaine sur l'innovation mondiale.
+        </p>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+          <button id="close-monument-modal" class="action-btn-main" style="padding: 10px 24px;">
+            <i class="fa-solid fa-cube"></i> <span>Fermer & Explorer en 3D</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librairies Externes 3D & Animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Moteur & Données Applicatives -->
+  <script src="portfolio_data.js"></script>
+  <script src="audio_sfx.js"></script>
+  <script src="tour_afrique_3d.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
