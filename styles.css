@@ -6,6 +6,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
 
 :root {
+  --flag-green: #10b981;
+  --flag-green-deep: #059669;
+  --flag-yellow: #fbbf24;
+  --flag-gold: #f59e0b;
+  --flag-red: #ef4444;
+  --flag-red-deep: #dc2626;
+  --flag-tricolor: linear-gradient(90deg, #10b981 0%, #10b981 33.33%, #fbbf24 33.33%, #fbbf24 66.66%, #ef4444 66.66%, #ef4444 100%);
+  --flag-tricolor-diag: linear-gradient(135deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
   --primary: #f59e0b;
   --primary-light: #fbbf24;
   --primary-dark: #b45309;
@@ -47,6 +55,19 @@ body {
   color: var(--text-main);
   user-select: none;
   touch-action: manipulation;
+}
+
+/* Liseré supérieur aux couleurs du drapeau national du Mali (Vert - Jaune - Rouge) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--flag-tricolor);
+  z-index: 1000;
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.55);
 }
 
 /* Container du Canvas 3D */
@@ -98,10 +119,10 @@ body {
 }
 
 .brand-logo {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary), var(--accent-terra));
+  background: var(--flag-tricolor-diag);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,8 +130,10 @@ body {
   font-weight: 800;
   font-size: 1.15rem;
   color: #fff;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45);
   flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .brand-info h1 {
@@ -136,14 +159,28 @@ body {
 .brand-info .tag-city {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(245, 158, 11, 0.2);
-  color: var(--primary-light);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--text-main);
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 6px;
   font-size: 0.68rem;
 }
+
+.flag-badge {
+  display: inline-flex;
+  width: 14px;
+  height: 9px;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+.flag-badge .c-green { width: 33.33%; height: 100%; background: #10b981; }
+.flag-badge .c-yellow { width: 33.33%; height: 100%; background: #fbbf24; }
+.flag-badge .c-red { width: 33.33%; height: 100%; background: #ef4444; }
 
 .header-controls {
   pointer-events: auto;
@@ -286,9 +323,9 @@ body {
 }
 
 .level-step.active {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(194, 94, 54, 0.26));
-  border-color: var(--primary);
-  box-shadow: 0 4px 22px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(245, 158, 11, 0.22) 50%, rgba(239, 68, 68, 0.18) 100%);
+  border-color: var(--flag-yellow);
+  box-shadow: 0 4px 22px rgba(245, 158, 11, 0.35);
 }
 
 .step-badge {
@@ -306,10 +343,11 @@ body {
 }
 
 .level-step.active .step-badge {
-  background: var(--primary);
-  color: #070a12;
+  background: var(--flag-tricolor-diag);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   box-shadow: 0 2px 14px rgba(245, 158, 11, 0.55);
-  transform: scale(1.06);
+  transform: scale(1.08);
 }
 
 .step-info {
@@ -585,8 +623,9 @@ body {
 
 .skill-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-terra), var(--primary-light));
+  background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #ef4444 100%);
   border-radius: 4px;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -640,7 +679,7 @@ body {
 }
 
 .action-btn-main {
-  background: linear-gradient(135deg, var(--primary), var(--accent-terra));
+  background: var(--flag-tricolor-diag);
   color: #fff;
   border: none;
   padding: 12px 18px;
@@ -655,6 +694,7 @@ body {
   text-decoration: none;
   box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
   transition: var(--transition);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .action-btn-main:hover {

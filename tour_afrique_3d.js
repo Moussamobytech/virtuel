@@ -98,33 +98,59 @@ class TourAfrique3D {
     stoneTex.wrapT = THREE.RepeatWrapping;
     stoneTex.repeat.set(4, 8);
 
-    // Texture pour l'anneau décoratif traditionnel (motif géométrique vert/crème/or)
+    // Texture pour l'anneau décoratif traditionnel aux couleurs nationales du MALI (Vert, Jaune/Or, Rouge)
     const bandCanvas = document.createElement("canvas");
     bandCanvas.width = 1024;
     bandCanvas.height = 256;
     const bCtx = bandCanvas.getContext("2d");
-    bCtx.fillStyle = "#e2d2b5";
-    bCtx.fillRect(0, 0, 1024, 256);
-    // Bandes vertes sahéliennes
-    bCtx.fillStyle = "#2d5a3c";
-    bCtx.fillRect(0, 30, 1024, 50);
-    bCtx.fillRect(0, 176, 1024, 50);
-    // Motifs losanges et chevrons dorés
-    bCtx.fillStyle = "#d4af37";
+    
+    // 1. Bande Supérieure : VERT DU MALI (#009A44 / #14B866)
+    bCtx.fillStyle = "#009A44";
+    bCtx.fillRect(0, 0, 1024, 76);
+
+    // 2. Bande Centrale : JAUNE / OR DU MALI (#FFCD00 / #FCD116)
+    bCtx.fillStyle = "#FFCD00";
+    bCtx.fillRect(0, 76, 1024, 104);
+
+    // 3. Bande Inférieure : ROUGE DU MALI (#CE1126)
+    bCtx.fillStyle = "#CE1126";
+    bCtx.fillRect(0, 180, 1024, 76);
+
+    // Motifs géométriques traditionnels soudano-sahéliens sculptés (reliefs blancs & or)
+    bCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
     for (let x = 0; x < 1024; x += 64) {
+      // Triangles traditionnels dans la bande verte
       bCtx.beginPath();
-      bCtx.moveTo(x + 32, 40);
-      bCtx.lineTo(x + 64, 128);
-      bCtx.lineTo(x + 32, 216);
-      bCtx.lineTo(x, 128);
+      bCtx.moveTo(x + 32, 12);
+      bCtx.lineTo(x + 52, 64);
+      bCtx.lineTo(x + 12, 64);
+      bCtx.closePath();
+      bCtx.fill();
+
+      // Chevrons dans la bande rouge
+      bCtx.beginPath();
+      bCtx.moveTo(x + 32, 244);
+      bCtx.lineTo(x + 52, 192);
+      bCtx.lineTo(x + 12, 192);
       bCtx.closePath();
       bCtx.fill();
     }
-    // Centre blanc/crème
-    bCtx.fillStyle = "#f4ece1";
+
+    // Losanges et médaillons dorés dans la bande centrale jaune
+    bCtx.fillStyle = "#8a4b08";
     for (let x = 0; x < 1024; x += 64) {
       bCtx.beginPath();
-      bCtx.arc(x + 32, 128, 14, 0, Math.PI * 2);
+      bCtx.moveTo(x + 32, 85);
+      bCtx.lineTo(x + 60, 128);
+      bCtx.lineTo(x + 32, 171);
+      bCtx.lineTo(x + 4, 128);
+      bCtx.closePath();
+      bCtx.fill();
+    }
+    bCtx.fillStyle = "#fff4cc";
+    for (let x = 0; x < 1024; x += 64) {
+      bCtx.beginPath();
+      bCtx.arc(x + 32, 128, 11, 0, Math.PI * 2);
       bCtx.fill();
     }
     const bandTex = new THREE.CanvasTexture(bandCanvas);
@@ -314,6 +340,63 @@ class TourAfrique3D {
       const palm = this.createStylizedPalmTree();
       palm.position.set(Math.cos(p.a) * p.r, 0.3, Math.sin(p.a) * p.r);
       worldGroup.add(palm);
+    });
+
+    // 6. Drapeaux Nationaux du Mali (Vert, Jaune, Rouge) dressés sur l'esplanade
+    this.flags = [];
+    const flagCanvas = document.createElement("canvas");
+    flagCanvas.width = 180;
+    flagCanvas.height = 120;
+    const fCtx = flagCanvas.getContext("2d");
+    fCtx.fillStyle = "#009A44"; // Vert
+    fCtx.fillRect(0, 0, 60, 120);
+    fCtx.fillStyle = "#FFCD00"; // Jaune
+    fCtx.fillRect(60, 0, 60, 120);
+    fCtx.fillStyle = "#CE1126"; // Rouge
+    fCtx.fillRect(120, 0, 60, 120);
+    const flagTex = new THREE.CanvasTexture(flagCanvas);
+
+    const flagMat = new THREE.MeshStandardMaterial({
+      map: flagTex,
+      side: THREE.DoubleSide,
+      roughness: 0.65
+    });
+    const poleMat = new THREE.MeshStandardMaterial({
+      color: 0xe0e0e0,
+      metalness: 0.85,
+      roughness: 0.2
+    });
+
+    // 6 Mâts de drapeaux alignés sur l'hémicycle d'entrée de l'esplanade
+    const flagAngles = [-0.42, -0.25, -0.09, 0.09, 0.25, 0.42];
+    flagAngles.forEach((ang) => {
+      const poleGroup = new THREE.Group();
+      const poleGeo = new THREE.CylinderGeometry(0.04, 0.05, 4.4, 8);
+      const poleMesh = new THREE.Mesh(poleGeo, poleMat);
+      poleMesh.position.y = 2.2;
+      poleMesh.castShadow = true;
+      poleGroup.add(poleMesh);
+
+      // Pommeau doré au sommet du mât
+      const finialGeo = new THREE.SphereGeometry(0.08, 12, 12);
+      const finialMesh = new THREE.Mesh(finialGeo, this.materials.goldAccent);
+      finialMesh.position.y = 4.4;
+      poleGroup.add(finialMesh);
+
+      // Tissu du drapeau du Mali (avec maillage pour animation d'ondulation au vent)
+      const flagGeo = new THREE.PlaneGeometry(1.3, 0.85, 12, 6);
+      flagGeo.translate(0.65, 0, 0);
+      const flagMesh = new THREE.Mesh(flagGeo, flagMat);
+      flagMesh.position.set(0.04, 3.85, 0);
+      flagMesh.castShadow = true;
+      poleGroup.add(flagMesh);
+
+      const r = 16.2;
+      poleGroup.position.set(Math.sin(ang) * r, 0.3, Math.cos(ang) * r);
+      poleGroup.rotation.y = -ang + Math.PI / 2;
+      worldGroup.add(poleGroup);
+
+      this.flags.push(flagMesh);
     });
 
     this.scene.add(worldGroup);
@@ -872,6 +955,20 @@ class TourAfrique3D {
     // Rotation douce de la sculpture de l'Afrique au sommet
     if (this.africaSculpture) {
       this.africaSculpture.rotation.y = Math.sin(time * 0.5) * 0.25;
+    }
+
+    // Animation de flottaison et ondulation des drapeaux maliens au vent
+    if (this.flags && this.flags.length > 0) {
+      this.flags.forEach((f, fi) => {
+        const pos = f.geometry.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i);
+          // Le bord attaché au mât (x proche de 0) reste fixe, le bout ondule
+          const wave = Math.sin(time * 5 + x * 4 + fi * 0.7) * (x * 0.12);
+          pos.setZ(i, wave);
+        }
+        pos.needsUpdate = true;
+      });
     }
 
     // Animation de pulsation des Hotspots
